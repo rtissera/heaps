@@ -72,6 +72,25 @@ class File {
 	}
 	#end
 
+	#if mobile
+	static function getMobilePath( path : String ) {
+		var fullPath : String;
+		if (System.get_platform() == System.Platform.IOS) {
+			fullPath = sys.Special("ios_document_path" + path);
+			if (sys.FileSystem.exists(fullPath))
+				return fullPath;
+			fullPath = sys.Special("ios_resource_path" + path);
+			if (sys.FileSystem.exists(fullPath))
+				return fullPath;
+		} else if (System.get_platform() == System.Platform.Android) {
+			fullPath = sys.Special("android_internal_storage_path" + path);
+			if (sys.FileSystem.exists(fullPath))
+				return fullPath;
+		}
+		return path;
+	}
+	#end
+
 	public static function browse( onSelect : BrowseSelect -> Void, ?options : BrowseOptions ) {
 		if( options == null ) options = {};
 		#if flash
@@ -153,6 +172,9 @@ class File {
 		#if (flash && air3)
 		return getRelPath(path).exists;
 		#elseif (sys || nodejs)
+		#if mobile
+			path = getMobilePath(path);
+		#end
 		return sys.FileSystem.exists(path);
 		#else
 		throw "Not supported";
@@ -167,6 +189,9 @@ class File {
 		} catch( e : Dynamic ) {
 		}
 		#elseif (sys || nodejs)
+		#if mobile
+			path = getMobilePath(path);
+		#end
 		try sys.FileSystem.deleteFile(path) catch( e : Dynamic ) { };
 		#else
 		throw "Not supported";
@@ -181,6 +206,9 @@ class File {
 			return [];
 		}
 		#elseif (sys || nodejs)
+		#if mobile
+			path = getMobilePath(path);
+		#end
 		return sys.FileSystem.readDirectory(path);
 		#else
 		throw "Not supported";
@@ -198,6 +226,9 @@ class File {
 		fs.close();
 		return bytes;
 		#elseif (sys || nodejs)
+		#if mobile
+			path = getMobilePath(path);
+		#end
 		return sys.io.File.getBytes(path);
 		#else
 		throw "Not supported";
@@ -226,6 +257,9 @@ class File {
 			#end
 			saveAs(data, { defaultPath:path } );
 		#elseif (sys || nodejs)
+		#if mobile
+			path = getMobilePath(path);
+		#end
 		sys.io.File.saveBytes(path, data);
 		#else
 		throw "Not supported";
@@ -256,6 +290,9 @@ class File {
 		#if (flash && air3)
 		getRelPath(path).createDirectory();
 		#elseif (sys || nodejs)
+		#if mobile
+			path = getMobilePath(path);
+		#end
 		sys.FileSystem.createDirectory(path);
 		#else
 		throw "Not supported";
@@ -276,4 +313,26 @@ class File {
 		#end
 	}
 
+	public static function getContent( path : String) : String {
+		#if (sys)
+		#if mobile
+			path = getMobilePath(path);
+		#end
+		return sys.io.File.getContent(path);
+		#else
+		throw "Not supported";
+		return null;
+		#end
+	}
+
+	public static function saveContent( path : String, content : String) {
+		#if (sys)
+		#if mobile
+			path = getMobilePath(path);
+		#end
+		sys.io.File.saveContent(path, content);
+		#else
+		throw "Not supported";
+		#end
+	}
 }

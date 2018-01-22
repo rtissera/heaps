@@ -52,7 +52,7 @@ class Save {
 			return defValue;
 		}
 		#elseif sys
-		return try loadData(sys.io.File.getContent(savePath(name)), checkSum) catch( e : Dynamic ) defValue;
+		return try loadData(hxd.File.getContent(savePath(name)), checkSum) catch( e : Dynamic ) defValue;
 		#elseif js
 		return try loadData(js.Browser.window.localStorage.getItem(name), checkSum) catch( e : Dynamic ) defValue;
 		#else
@@ -82,8 +82,8 @@ class Save {
 		#elseif sys
 		var data = saveData(val,checkSum);
 		var file = savePath(name);
-		try if( sys.io.File.getContent(file) == data ) return false catch( e : Dynamic ) {};
-		sys.io.File.saveContent(file, data);
+		try if( hxd.File.getContent(file) == data ) return false catch( e : Dynamic ) {};
+		hxd.File.saveContent(file, data);
 		return true;
 		#elseif js
 		var data = saveData(val, checkSum);

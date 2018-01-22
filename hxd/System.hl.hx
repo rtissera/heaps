@@ -266,7 +266,11 @@ class System {
 	#elseif hlsdl
 	static function get_width() : Int return sdl.Sdl.getScreenWidth();
 	static function get_height() : Int return sdl.Sdl.getScreenHeight();
+	#if mobile
+	static function get_platform() : Platform return IOS; // TODO : Xbox ?
+	#else
 	static function get_platform() : Platform return PC; // TODO : Xbox ?
+	#end
 	#else
 	static function get_width() : Int return 800;
 	static function get_height() : Int return 600;
